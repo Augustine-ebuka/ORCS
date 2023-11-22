@@ -17,8 +17,11 @@ bycrpt = Bcrypt(app)
 migrate = Migrate(app, db)
 
 
+
+
+
 # login student
-@app.route('/api/users', methods=['POST'])
+@app.route('/api/student/login', methods=['POST'])
 def student_login():
     try:
         if request.method == 'POST':
@@ -37,6 +40,12 @@ def student_login():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# # Signup Student
+# @app.route('/api/student/register', methods= ['POST'])
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
