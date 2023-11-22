@@ -36,7 +36,15 @@ def student_login():
             session['logged_in'] = True
 
 
-            return jsonify({'message': 'User created successfully', data:new_user}),201
+            return jsonify({'message': 'User created successfully', 'data': {
+                'matric_no': new_user.matric_no,
+                'first_name': new_user.first_name,
+                'last_name': new_user.last_name,
+                'other_name': new_user.other_name,
+                'faculty': new_user.faculty,
+                'department': new_user.department
+            }}), 201
+
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
