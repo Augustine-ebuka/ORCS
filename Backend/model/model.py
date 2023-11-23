@@ -5,6 +5,7 @@ from datetime import datetime
 db = SQLAlchemy()
 
 
+
 def get_uuid():
     return uuid4().hex
 
