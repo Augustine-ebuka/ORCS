@@ -35,9 +35,9 @@ def student_login():
             if not password or not matric_no:
                 return({"message": "password or matric no cannot be empty"}), 401
 
-            student = Student.query.filter_by(matric_no = data.get(matric_no) ).first()
+            student = Student.query.filter_by(matric_no = data.get('matric_no') ).first()
             
-            if student is None:
+            if not student:
                  return({"message": "student not found"}), 401
             
             if not bycrpt.check_password_hash(student.password, password):
