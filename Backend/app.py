@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_migrate import Migrate
-from model.model import Student,db
+from model.model import Student,db,Course, Result
 from flask_cors import CORS, cross_origin
 from flask_bcrypt import Bcrypt
 
