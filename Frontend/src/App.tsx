@@ -1,10 +1,15 @@
 
+import {Routes, Route}  from 'react-router-dom'
+import Login from './pages/login'
+
 function App() {
 
 
   return (
     <>
-      <h1 style={{fontWeight:300, color:"red"}}>Hello hebrus</h1>
+      <Routes>
+        <Route path='/' element={<Login />} />
+      </Routes>
     </>
   )
 }

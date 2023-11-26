@@ -1,0 +1,20 @@
+.login_container{
+
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    width: 30%;
+    padding: 20px;
+    border-radius: 3px;
+
+}
