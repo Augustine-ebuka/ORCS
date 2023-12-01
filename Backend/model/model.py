@@ -15,10 +15,11 @@ class Student(db.Model):
     id = db.Column(db.String(32),default=get_uuid)
     matric_no = db.Column(db.String(10), primary_key=True,unique=True, nullable=False) 
     first_name = db.Column(db.String(32),nullable=False)
+    middle_name = db.Column(db.String(32), nullable=False)
     last_name = db.Column(db.String(32), nullable=False)
-    other_name = db.Column(db.String(32), nullable=False)
     faculty = db.Column(db.Enum('SOC', 'SOS'), nullable=False)
     department = db.Column(db.Enum('software engineering', 'information system'),nullable=False)
+    level = db.Column(db.Enum('100','200','300','400','500'),nullable=False)
     image = db.Column(db.Text)
     password = db.Column(db.Text, nullable=False)
 

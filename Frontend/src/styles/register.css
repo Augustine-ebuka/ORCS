@@ -1,0 +1,40 @@
+.register_container {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .register_container h1{
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .three_col {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1; /* Added property for full width */
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+  }
+  
+  .two_col {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-grow: 1; /* Added property for full width */
+    margin-bottom: 20px;
+  }
+@media only screen and (max-width:760px){
+    .three_col{
+        display: flex;
+        gap: 10px;
+        flex-direction:column;
+        
+    }
+    .two_col{
+        display: flex;
+        flex-direction:column;
+        gap: 10px;
+    
+    }
+}

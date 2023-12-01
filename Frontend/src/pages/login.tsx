@@ -8,10 +8,10 @@ function Login() {
 
     return (
         <>
-            <Layout>
+            <Layout leftmargin={150} rightmargin={150}>
                 <div className="login_container">
                     <h1>Student Login</h1>
-                    <form method="POST">
+                    <form method="POST" className="login_form">
                         <InputForm inputName="matric_no" inputType='text' label="Matric No" placeholder="e.g FAT/17/2473"></InputForm>
                         <InputForm inputName="Password" inputType='password' label="password" placeholder="password"></InputForm>
                         <Button buttonName="submit"></Button>

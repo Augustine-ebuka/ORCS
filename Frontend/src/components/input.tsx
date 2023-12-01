@@ -1,30 +1,48 @@
-import {FC} from 'react'
-import '../styles/input.css'
-interface InputProps{
-    label? : string,
-    inputName : string
-    placeholder? : string
-    inputType: (string|number|any)
-}
-const InputForm : FC<InputProps> = ({
-    label,
-    inputName,
-    inputType,
-    placeholder
-}) =>{
+import React from 'react';
+import '../styles/input.css';
 
-    return (
-        <>
-        <div className='input-form'>
-        <label htmlFor={label}> {label}</label>
-        <input 
-        name={inputName} 
-        type={inputType} 
-        placeholder={placeholder}
-        >    
-        </input>
-        </div>    
-        </>
-    )
+interface InputProps {
+  label?: string;
+  inputName: string;
+  placeholder?: string;
+  inputType: string | number | any;
+  options?: string[];
+  onChange?: (event:any)=> any
+  value?: any
 }
-export default InputForm
+
+const InputForm: React.FC<InputProps> = ({
+  label,
+  inputName,
+  inputType,
+  placeholder,
+  options,
+  onChange,
+  value
+}) => {
+  return (
+    <div className="input-form">
+      <label htmlFor={inputName}>{label}</label>
+      {inputType === 'select' ? (
+        <select name={inputName} value={value} onChange={onChange}>
+          {options &&
+            options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+        </select>
+      ) : (
+        <input
+          name={inputName}
+          type={inputType}
+          placeholder={placeholder}
+          onChange={onChange}
+          value = {value}
+        />
+      )}
+    </div>
+  );
+};
+
+export default InputForm;
