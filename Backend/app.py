@@ -108,6 +108,13 @@ def student_info():
                     'other_name': student.other_name,
                     'faculty': student.faculty,
                     'department': student.department,
+                    'Result': {
+                        'course_code': result.course_code,
+                        'session': result.session,
+                        'semester': result.semester,
+                        'mark': result.mark,
+                        'grade_point': result.grade_point
+                    }
                 }
                 student_list.append(student_info)
             return jsonify(student_list), 200
@@ -218,6 +225,39 @@ def upload_student_result():
             semester = data.get('semester')
 
             # Insert a function that computes the grade point based on marks
+
+            data = request.get_json()
+            matric_no = data.get('matric_no')
+            
+            # Filter Student Information Based on Matric No
+            form_data = db.session.query(Student).filter(Student.matric_no == matric_no).all()
+            if form_data:
+                student_info = []
+                student = form_data[0]
+                student_info.append(student.first_name)
+                student_info.append(student.last_name)
+                student_info.append(student.other_name)
+                student_info.append(student.faculty)
+                student_info.append(student.department)
+                return jsonify(student_info), 200
+            else:
+                return jsonify({'message': 'Student not found'}), 404
+
+            # Filter Result based on Matric No
+            form_data = db.session.query(Result).filter(Result.matric_no == matric_no).all()
+            if form_data:
+                result_info = []
+                for result in form_data:
+                    result_info.append({
+                        'course_code': result.course_code,
+                        'mark': result.mark,
+                        'grade_point': result.grade_point,
+                        'session': result.session,
+                        'semester': result.semester
+                    })
+                return jsonify(result_info), 200
+            else:
+                return jsonify({'message': 'Result not found'}), 404
 
             upload_result = Result(
                 course_code=course_code,
