@@ -12,10 +12,10 @@ def get_uuid():
 
 class Student(db.Model):
     __tablename__ = "students"
-    id = db.Column(db.String(32),default=get_uuid)
+    id = db.Column(db.String(72),default=get_uuid)
     matric_no = db.Column(db.String(10), primary_key=True,unique=True, nullable=False) 
     first_name = db.Column(db.String(32),nullable=False)
-    middle_name = db.Column(db.String(32), nullable=False)
+    middle_name = db.Column(db.String(32))
     last_name = db.Column(db.String(32), nullable=False)
     faculty = db.Column(db.Enum('SOC', 'SOS'), nullable=False)
     department = db.Column(db.Enum('software engineering', 'information system'),nullable=False)

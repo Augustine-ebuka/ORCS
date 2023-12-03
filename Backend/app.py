@@ -66,10 +66,11 @@ def student_register():
                 new_stu = Student(
                     matric_no=data.get('matric_no'),
                     first_name = data.get('first_name'),
+                    middle_name = data.get('middle_name'),
                     last_name = data.get('last_name'),
-                    other_name = data.get('other_name'),
                     faculty = data.get('faculty'),
                     department = data.get('department'),
+                    level = data.get('level'),
                     image = data.get('image'),
                     password = hash_pass
                                     )
@@ -78,7 +79,7 @@ def student_register():
                 session['stud_mat'] = data.get('matric_no')
                 return jsonify({'message': 'student created successfully!'}), 201
             else:
-                return jsonify({"message":"missing field"}), 400
+                return jsonify({"error":"missing field"}), 400
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500

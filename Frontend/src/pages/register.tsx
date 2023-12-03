@@ -1,18 +1,21 @@
-import "../styles/register.css";
-import Button from "../components/button";
-import InputForm from "../components/input";
-import Layout from "../components/layout";
-import { useState } from "react";
+import React, { useState } from 'react';
+import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import Button from '../components/button';
+import InputForm from '../components/input';
+import Layout from '../components/layout';
+
+import '../styles/register.css';
 
 function Register() {
   const faculty = ['SOS', 'SOC', 'PLD'];
   const department = ['SEN', 'CSC', 'IFT'];
   const level = ['100', '200', '300', '400', '500'];
-  const api = '';
+  const api = 'http://localhost:5000/api/student/register';
 
-  const [formData, setFormdata] = useState({
+  const [formData, setFormData] = useState({
     first_name: '',
     middle_name: '',
     last_name: '',
@@ -23,31 +26,56 @@ function Register() {
     level: '',
     password: ''
   });
+  const [loading, setIsloading] = useState<boolean>(false)
 
-  const formSubmit = (event: any) => {
+  const formSubmit = async (event:any) => {
     event.preventDefault();
-    // Perform validation
     if (!validateForm()) {
       return;
     }
-    // Submit the form data to the API
-    // ...
+    try {
+      console.log(formData)
+      const result = await axios.post(api, formData);
+      setIsloading(true)
+      if (result.data && result.data.data) {
+        toast.success(result.data.data.message);
+        console.log(result.data.data);
+      } else {
+        toast.error(result.data);
+      }
+    } catch (error:any) {
+      toast.error(error.message);
+      console.log(error);
+    } finally{
+      setIsloading(false)
+      console.log('i am done regardless')
+    }
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event:any) => {
     const { name, value } = event.target;
-    setFormdata((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const validateForm = () => {
+    const {
+      first_name,
+      last_name,
+      faculty,
+      department,
+      matric_no,
+      level,
+      password
+    } = formData;
+
     if (
-      formData.first_name.trim() === '' ||
-      formData.last_name.trim() === '' ||
-      formData.faculty.trim() === '' ||
-      formData.department.trim() === '' ||
-      formData.matric_no.trim() === '' ||
-      formData.level.trim() === '' ||
-      formData.password.trim() === ''
+      first_name.trim() === '' ||
+      last_name.trim() === '' ||
+      faculty.trim() === '' ||
+      department.trim() === '' ||
+      matric_no.trim() === '' ||
+      level.trim() === '' ||
+      password.trim() === ''
     ) {
       toast.error('Please fill in all required fields');
       return false;
@@ -76,6 +104,7 @@ function Register() {
                 inputType="text"
                 placeholder="middle name"
                 label="middle name"
+                value={formData.middle_name}
                 onChange={handleSubmit}
               />
               <InputForm
@@ -83,6 +112,7 @@ function Register() {
                 inputType="text"
                 placeholder="last name"
                 label="last name"
+                value={formData.last_name}
                 onChange={handleSubmit}
               />
             </div>
@@ -92,6 +122,7 @@ function Register() {
                 inputType="text"
                 placeholder="matric number"
                 label="matric No"
+                value={formData.matric_no}
                 onChange={handleSubmit}
               />
               <InputForm
@@ -99,6 +130,7 @@ function Register() {
                 inputType="password"
                 placeholder="password"
                 label="password"
+                value={formData.password}
                 onChange={handleSubmit}
               />
             </div>
@@ -109,14 +141,16 @@ function Register() {
                 placeholder="Faculty"
                 options={faculty}
                 label="faculty"
+                value={formData.faculty}
                 onChange={handleSubmit}
               />
               <InputForm
                 inputName="department"
                 inputType="select"
                 placeholder="department"
+                value={formData.department}
                 options={department}
-                label="department"
+label="department"
                 onChange={handleSubmit}
               />
             </div>
@@ -126,6 +160,7 @@ function Register() {
                 inputType="file"
                 placeholder="image"
                 label="image"
+                value={formData.image}
                 onChange={handleSubmit}
               />
               <InputForm
@@ -133,11 +168,13 @@ function Register() {
                 inputType="select"
                 placeholder="level"
                 options={level}
+                value={formData.level}
                 label="level"
                 onChange={handleSubmit}
               />
             </div>
-            <Button buttonName="submit details"/>
+            {loading && <p>Loading...</p>}
+            <Button buttonName="submit details" />
           </div>
         </form>
       </Layout>
