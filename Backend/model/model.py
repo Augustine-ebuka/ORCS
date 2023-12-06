@@ -19,18 +19,21 @@ class Student(db.Model):
     other_name = db.Column(db.String(32), nullable=False)
     faculty = db.Column(db.Enum('SOC', 'SOS'), nullable=False)
     department = db.Column(db.Enum('software engineering', 'information system'),nullable=False)
+    level = db.Column(db.Enum('100','200','300','400','500'),nullable=False)
     image = db.Column(db.Text)
-    password = db.Column(db.Text, nullable=False) 
+    password = db.Column(db.Text, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
     def __init__(self, matric_no, first_name, last_name,
-                 other_name, faculty, department, image, password):
+                 other_name, faculty, department, level, image, password):
         self.matric_no = matric_no
         self.first_name = first_name
         self.last_name = last_name
         self.other_name = other_name
         self.faculty = faculty
         self.department = department
+        self.level = level
         self.image = image
         self.password = password
 
@@ -60,7 +63,7 @@ class Result(db.Model):
     mark =db.Column(db.Integer, nullable=False)
     grade_point = db.Column(db.Integer)
     session = db.Column(db.String(32), nullable=False)
-    semester = db.Column(db.String(32), db.Enum('first', 'second'), nullable=False)
+    semester = db.Column(db.String(32), db.Enum('first', 'second', 'third'), nullable=False)
 
 
 class Admin_Base(db.Model):
