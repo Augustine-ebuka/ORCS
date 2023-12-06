@@ -94,7 +94,8 @@ def student_info():
     try:
         if request.method == 'GET':
             # matric_no = session.get('stud_mat')
-            matric_no = '73322'
+            matric_no = '79146'
+            
             student_data = db.session.query(Student, Result).filter(
                     Student.matric_no == Result.matric_no).filter(Student.matric_no == matric_no).all()
             # student = db.session.query(Student).filter_by(Student.matric_no = matric_no).first()
@@ -115,9 +116,9 @@ def student_info():
                         'semester': result.semester,
                         'mark': result.mark,
                         'grade_point': result.grade_point
-                        }
                     }
-                student_list.append(student_info)
+                }
+            student_list.append(student_info)
             return jsonify(student_list), 200
     
     except Exception as e:
@@ -142,7 +143,8 @@ def admin_signup():
             check_if_exist = Admin_Base.query.filter_by(email=email).first()
             if check_if_exist:
                 return jsonify({"error": "admin with this email already exist"})
-            if data:
+            
+            if not check_if_exist:
                 hash_pass = bycrpt.generate_password_hash(password)
                 # Save signup to admin Database
                 new_admin = Admin_Base(
@@ -154,8 +156,10 @@ def admin_signup():
                     )
                 new_admin.save()
                 return jsonify({'message': 'admin created successfully!'}), 201
+            
             else:
                 return jsonify({"message":"unable to create this admin account"}), 400
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
