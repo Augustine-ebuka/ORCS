@@ -196,7 +196,7 @@ def upload_student_result():
     try:
         if request.method == 'POST':
             # Get Post Request
-            # This is indended to get the student info from the frontend i.e Admin Panel
+            # This is intended to get the student info from the frontend i.e Admin Panel
             data = request.get_json()
             course_code = data.get('course_code')
             matric_no = data.get('matric_no')
