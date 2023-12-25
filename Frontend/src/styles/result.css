@@ -1,0 +1,28 @@
+.result-container{
+    margin: 30px 7px 7px 7px ;
+}
+.result-header {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+    
+  .input-form label {
+    margin-bottom: 5px;
+    color: #007bff;
+    font-weight: 400;
+  }
+    
+  
+  .input-form select {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none
+
+  
+  }
+  

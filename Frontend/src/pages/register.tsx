@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Blocks} from 'react-loader-spinner'
 
 import Button from '../components/button';
 import InputForm from '../components/input';
 import Layout from '../components/layout';
+import { useNavigate } from 'react-router-dom';
 
 import '../styles/register.css';
 
 function Register() {
   const faculty = ['SOS', 'SOC', 'PLD'];
-  const department = ['SEN', 'CSC', 'IFT'];
+  const department = ['software engineering', 'computer science', 'information technology'];
   const level = ['100', '200', '300', '400', '500'];
   const api = 'http://localhost:5000/api/student/register';
-
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     first_name: '',
     middle_name: '',
@@ -26,7 +28,7 @@ function Register() {
     level: '',
     password: ''
   });
-  const [loading, setIsloading] = useState<boolean>(false)
+  const [loading, setIsloading] = useState<boolean>()
 
   const formSubmit = async (event:any) => {
     event.preventDefault();
@@ -34,19 +36,36 @@ function Register() {
       return;
     }
     try {
-      console.log(formData)
       const result = await axios.post(api, formData);
       setIsloading(true)
-      if (result.data && result.data.data) {
-        toast.success(result.data.data.message);
-        console.log(result.data.data);
-      } else {
-        toast.error(result.data);
+      setTimeout(() => {
+        navigate('/register')
+      }, 3000);
+     if(result.status == 201){
+      toast.success("registration created!");
+     }
+    } 
+    catch (error:any) {
+      switch (error.response.status) {
+        case 403:
+          toast.error("user already exist!");
+          break;
+
+        case 400:
+          toast.error("missing field(s)!");
+          break
+
+        case 500:
+          toast.error("server error");
+          break
+
+        default:
+          toast.error("something went wrong");
+          break;
       }
-    } catch (error:any) {
-      toast.error(error.message);
-      console.log(error);
-    } finally{
+      console.log(error.response.status);
+    } 
+    finally{
       setIsloading(false)
       console.log('i am done regardless')
     }
@@ -60,6 +79,7 @@ function Register() {
   const validateForm = () => {
     const {
       first_name,
+      middle_name,
       last_name,
       faculty,
       department,
@@ -70,6 +90,7 @@ function Register() {
 
     if (
       first_name.trim() === '' ||
+      middle_name.trim() === '' ||
       last_name.trim() === '' ||
       faculty.trim() === '' ||
       department.trim() === '' ||
@@ -87,6 +108,7 @@ function Register() {
     <>
       <Layout leftmargin={150} rightmargin={150}>
         <ToastContainer />
+ 
         <form onSubmit={formSubmit}>
           <div className="register_container">
             <h1>Student details registration</h1>
@@ -150,7 +172,7 @@ function Register() {
                 placeholder="department"
                 value={formData.department}
                 options={department}
-label="department"
+                label="department"
                 onChange={handleSubmit}
               />
             </div>
@@ -173,7 +195,18 @@ label="department"
                 onChange={handleSubmit}
               />
             </div>
-            {loading && <p>Loading...</p>}
+            {loading?"hello":"nothing"}
+            {loading && (
+                     <Blocks
+                     height="80"
+                     width="80"
+                     color="#4fa94d"
+                     ariaLabel="blocks-loading"
+                     wrapperStyle={{}}
+                     wrapperClass="blocks-wrapper"
+                     visible={true}
+                     />
+            )}
             <Button buttonName="submit details" />
           </div>
         </form>

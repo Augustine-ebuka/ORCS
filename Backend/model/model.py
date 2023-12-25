@@ -13,25 +13,25 @@ def get_uuid():
 class Student(db.Model):
     __tablename__ = "students"
     id = db.Column(db.String(40),default=get_uuid)
-    matric_no = db.Column(db.String(10), primary_key=True,unique=True, nullable=False) 
+    matric_no = db.Column(db.String(16), primary_key=True,unique=True, nullable=False) 
     first_name = db.Column(db.String(32),nullable=False)
     middle_name = db.Column(db.String(32))
     last_name = db.Column(db.String(32), nullable=False)
     faculty = db.Column(db.Enum('SOC', 'SOS'), nullable=False)
-    department = db.Column(db.Enum('software engineering', 'information system'),nullable=False)
+    department = db.Column(db.String(32),db.Enum('software engineering', 'information system',),nullable=False)
     level = db.Column(db.Enum('100','200','300','400','500'),nullable=False)
     image = db.Column(db.Text)
     password = db.Column(db.Text, nullable=False) 
 
 
-    def __init__(self, matric_no, first_name, last_name,
-                 other_name, faculty, department, image, password):
+    def __init__(self, matric_no, first_name, last_name,middle_name, faculty, department, image, password, level):
         self.matric_no = matric_no
         self.first_name = first_name
+        self.middle_name = middle_name
         self.last_name = last_name
-        self.other_name = other_name
         self.faculty = faculty
         self.department = department
+        self.level = level
         self.image = image
         self.password = password
 

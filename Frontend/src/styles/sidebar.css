@@ -1,0 +1,28 @@
+.sidebar{
+    background-color: white;
+    color: blue;
+
+}
+.sidebar_container{
+    padding: 0px;
+}
+.sidebar_container ul{
+    padding: 2px;
+    list-style: none;
+}
+.sidebar_container ul li{
+    padding: 10px 5px;
+    font-size: medium;
+    cursor: pointer;
+}
+.active{
+    background-color: blue;
+    color: white;
+    border-radius: 3px;
+}
+
+li:hover{
+    background-color:gray;
+    color: white;
+    border-radius: 3px;
+}

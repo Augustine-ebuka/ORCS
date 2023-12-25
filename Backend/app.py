@@ -44,10 +44,10 @@ def student_login():
             student = Student.query.filter_by(matric_no = data.get('matric_no')).first()
             
             if not student:
-                 return({"message": "student not found"}), 401
+                 return({"error": "student not found"}), 404
             
             if not bycrpt.check_password_hash(student.password, password):
-                return jsonify({"message":"UnAuthenticated"}), 401
+                return jsonify({"error":"password incorrect"}), 401
 
             session['stud_mat'] = data.get('matric_no')
             session['is_logged_in'] = True
@@ -66,7 +66,7 @@ def student_register():
             data = request.get_json()
             check_if_exist = Student.query.filter_by(matric_no = data.get('matric_no')).first()
             if check_if_exist:
-                return jsonify({"error": "student already exist"})
+                return jsonify({"error": "student already exist"}),403
             if data:
                 hash_pass = bycrpt.generate_password_hash(data.get('password'))
                 new_stu = Student(
@@ -80,7 +80,8 @@ def student_register():
                     image = data.get('image'),
                     password = hash_pass
                     )      
-                new_stu.save()
+                db.session.add(new_stu)
+                db.session.commit()
                 session['stud_mat'] = data.get('matric_no')
                 return jsonify({'message': 'student created successfully!'}), 201
             else:
@@ -101,7 +102,7 @@ def student_info():
             student_data = db.session.query(Student).filter_by(matric_no = matric_no).first()
             if student_data:
                 student_list = []
-                student, result = student_data[0]
+                student = student_data
                 student_info = {
                     'matric_no': student.matric_no,
                     'first_name': student.first_name,
@@ -109,10 +110,11 @@ def student_info():
                     'last_name': student.last_name,
                     'faculty': student.faculty,
                     'department': student.department,
-                    'level': student.level
+                    'level': student.level,
+                    'image': student.image
                 }
                 student_list.append(student_info)
-            return jsonify(student_list), 200
+            return jsonify({"message":student_list}), 200
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500

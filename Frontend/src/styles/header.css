@@ -1,0 +1,25 @@
+.header-container{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    height: 40px;
+    background-color: white;
+    align-items: center;
+    margin: 7px;
+
+}
+.header-right{
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    font-size: 12px;
+}
+.header-right .pic{
+    border-radius:50% ;
+    background-color: gray;
+    height: 40px;
+    width: 40px;
+}
+.header-left{
+    font-size: 12px;
+}
