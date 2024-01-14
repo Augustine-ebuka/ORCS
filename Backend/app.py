@@ -1,23 +1,23 @@
 from flask import Flask, jsonify, request, session, abort
 from flask_migrate import Migrate
 from model.model import Student, db, Course, Result, Admin_Base
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_login import (LoginManager, login_user,
-                         logout_user, login_required,
-                         current_user)
+from flask_session import Session
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/orcs_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.secret_key = 'your_secret_key'  # Set your secret key for sessions
-# initialize the app with the extension
-db.init_app(app)
-CORS(app, supports_credentials=True)  # Enable CORS for all routes
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+app.secret_key = os.urandom(24)
+
+# initialize the app with the extension
+CORS(app, supports_credentials=True, origins='*')  
+db.init_app(app)
 
 bycrpt = Bcrypt(app)
 with app.app_context():
@@ -48,14 +48,21 @@ def student_login():
             
             if not bycrpt.check_password_hash(student.password, password):
                 return jsonify({"error":"password incorrect"}), 401
-
-            session['stud_mat'] = data.get('matric_no')
+            
+            session['user_id'] = student.id
             session['is_logged_in'] = True
             return jsonify({'message': 'User logged in successfully'}), 200
-
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# logout
+@app.route('/api/student/logout', methods=['POST'])
+def logout():
+    session.pop('user_id')
+    return jsonify({"message": "logout successfully"}), 200
+
 
 
 # # Signup Student
@@ -95,15 +102,16 @@ def student_register():
 def student_info():
     try:
         if request.method == 'GET':
-            matric_no = session.get('stud_mat')
-            # matric_no = '73322'
-            # student_data = db.session.query(Student, Result).filter(
-            #         Student.matric_no == Result.matric_no).filter(Student.matric_no == matric_no).all()
-            student_data = db.session.query(Student).filter_by(matric_no = matric_no).first()
+            user_id = session.get('user_id')
+            if not user_id:
+                return jsonify({'error':"unauthorizzed"}), 401
+            
+            student_data = db.session.query(Student).filter_by(id = user_id).first()
             if student_data:
                 student_list = []
                 student = student_data
                 student_info = {
+                    'id':student.id,
                     'matric_no': student.matric_no,
                     'first_name': student.first_name,
                     'middle_name': student.middle_name,
@@ -114,7 +122,9 @@ def student_info():
                     'image': student.image
                 }
                 student_list.append(student_info)
-            return jsonify({"message":student_list}), 200
+                return jsonify({"message":student_list}), 200
+            else:
+                return jsonify({"error":"Student not found"}), 403
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500

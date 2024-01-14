@@ -3,7 +3,7 @@ import Button from "../components/button";
 import InputForm from "../components/input";
 import Layout from "../components/layout";
 import '../styles/login.css';
-import axios from "axios";
+import httpClient from "../components/httpClient";
 import {useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -23,7 +23,7 @@ function Login() {
 
     const api = 'http://localhost:5000/api/student/login';
     try {
-      const result = await axios.post(api, formData);
+      const result = await httpClient.post(api, formData);
       if (result.status == 200) {
         toast.success("login success");
 
@@ -75,7 +75,7 @@ function Login() {
   return (
     <>
       <ToastContainer></ToastContainer>
-      <Layout leftmargin={150} rightmargin={150}>
+      <Layout leftmargin={15} rightmargin={15}>
         <div className="login_container">
           <h1>Student Login</h1>
           <form method="POST" className="login_form" onSubmit={login}>

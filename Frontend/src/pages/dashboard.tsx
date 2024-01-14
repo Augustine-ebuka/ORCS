@@ -1,31 +1,40 @@
 import '../styles/dashboard.css'
 import {useState, useEffect  } from "react"
-import axios from "axios";
+import httpClient from '../components/httpClient'
 import { useContext } from 'react'
 import { MyContext } from '../components/sidebar'
 import Header from '../components/header'
 import Result from '../components/result'
+import {useNavigate } from "react-router-dom";
 // import {utilityContext} from '../context/generalContext'
 
 
 function Dashboard() {
     const {isActive,setActive} = useContext(MyContext)
     const [userData, setUserdata] = useState<any>(null)
-    const api = 'http://localhost:5000/api/student/info'
+    // const api = 'http://localhost:5000/api/student/info'
+    const naviate = useNavigate()
     console.log(isActive)
-    useEffect(() => {
-        const fetchUser = async ()=>{
-            try {
-                const result = await axios(api)
-                if (result.status == 200) {
-                    console.log(result)
-                    setUserdata(result)
-                }
-            } catch (error:any) {
-                console.log(error)   
+
+    const fetchUser = async ()=>{
+        try {
+            const result = await httpClient.get('http://localhost:5000/api/student/info')
+            if (result.status == 200) {
+                console.log(result.data)
+                // setUserdata(result)
+            }else if(result.status===401){
+                // naviate('/')
+                console.log(result.data)    
             }
-            fetchUser()
+        } catch (error:any) {
+            naviate('/')
+            console.log(error)   
         }
+    }
+    
+    useEffect(() => {
+        fetchUser()
+     
        }, [])
 
     return (

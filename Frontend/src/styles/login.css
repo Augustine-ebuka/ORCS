@@ -18,3 +18,16 @@
     border-radius: 3px;
 
 }
+@media screen and (max-width:769px){
+    .login_form{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        width: 100%;
+        padding: 20px;
+        border-radius: 3px;
+    }
+}
