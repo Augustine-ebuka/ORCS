@@ -248,8 +248,94 @@ def student_result():
 
     
 
+from sqlalchemy.exc import IntegrityError
 
-# @app.route('/api/student/result/fetch', methods=['POST', 'GET'])
+@app.route('/api/student/result/upload', methods=['POST'])
+def result_upload():
+    try:
+        if request.method == 'POST':
+            data_list = request.get_json()
+
+            results = []
+
+            # Iterate through the list of data objects
+            for data in data_list:
+                course_code = data.get('course_code')
+                matric_no = data.get('matric_no')
+                mark = data.get('mark')
+                course_unit = data.get('course_unit')
+                session = data.get('session')
+                semester = data.get('semester')
+                level = data.get('level')
+
+                # Create a new Result object for each data entry
+                insert_new_result = Result(course_code, matric_no, mark, course_unit, session, semester, level)
+                db.session.add(insert_new_result)
+                db.session.commit()
+
+                result = {
+                    "course_code": insert_new_result.course_code,
+                    "matric_no": insert_new_result.matric_no,
+                    "mark": insert_new_result.mark,
+                    "course_unit": insert_new_result.course_unit,
+                    "session": insert_new_result.session,
+                    "semester": insert_new_result.semester,
+                    "level": insert_new_result.level,
+                    "total": insert_new_result.total,
+                    "total_course_unit": insert_new_result.total_course_unit,
+                }
+
+                results.append(result)
+
+            return jsonify({"message": "results created successfully", "results": results})
+
+    except IntegrityError as e:
+        # Check if the error is due to a duplicate entry
+        if 'Duplicate entry' in str(e):
+            return jsonify({"error": "Duplicate entry. Please check your data."}), 400
+        elif 'foreign key constraint fails' in str(e):
+            return jsonify({"error": "The specified course has not been registered."}), 400
+        else:
+            return jsonify({"error": str(e)}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/api/student/course/upload', methods=['POST'])
+def upload_course():
+    try:
+        data_list = request.get_json()
+
+        for data in data_list:
+            course_code = data.get('course_code')
+            course_title = data.get('course_title')
+            course_lecturer = data.get('course_lecturer')
+            course_credit = data.get('course_credit')
+
+            insert_new_course = Course(course_code, course_title, course_lecturer, course_credit)
+            db.session.add(insert_new_course)
+            db.session.commit()
+
+        return jsonify({"message": "Courses uploaded successfully"})
+
+    except IntegrityError as e:
+        # Check if the error is due to a duplicate entry
+        if 'Duplicate entry' in str(e):
+            return jsonify({"error": "Duplicate entry. Please check your data."}), 400
+        elif 'foreign key constraint fails' in str(e):
+            return jsonify({"error": "The specified course has not been registered."}), 400
+        else:
+            return jsonify({"error": str(e)}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+            
+# @app.route('/api/student/result/fetch', methods=['POST'])
 # def upload_student_result():
 #     try:
 #         if request.method == 'GET':
