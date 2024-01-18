@@ -8,10 +8,17 @@ import Result from '../components/result'
 import {useNavigate } from "react-router-dom";
 // import {utilityContext} from '../context/generalContext'
 
+interface studentDetails{
+    department:string,
+    faculty:string,
+    first_name:string,
+    matric_no:string,
+    level:string
+}
 
 function Dashboard() {
     const {isActive,setActive} = useContext(MyContext)
-    const [userData, setUserdata] = useState<any>(null)
+    const [userData, setUserdata] = useState<studentDetails | undefined >(undefined)
     // const api = 'http://localhost:5000/api/student/info'
     const naviate = useNavigate()
     console.log(isActive)
@@ -20,8 +27,8 @@ function Dashboard() {
         try {
             const result = await httpClient.get('http://localhost:5000/api/student/info')
             if (result.status == 200) {
-                console.log(result.data)
-                // setUserdata(result)
+                console.log(result.data.message[0].department)
+                setUserdata(result.data.message[0])
             }else if(result.status===401){
                 // naviate('/')
                 console.log(result.data)    
@@ -51,9 +58,10 @@ function Dashboard() {
                 </ul>
             </div>
             <div className='main'>
-                <Header>
+                <Header first_name={userData?.first_name} department={userData?.department} faculty={userData?.faculty} level={userData?.level} matric_no={userData?.matric_no}>
                     
                 </Header>
+                {userData? userData.department: "not found"}
                 
                    {isActive === null ? (<Result></Result>) : ''}
                    {isActive === 0 ? (<h1>i am zero</h1>) : ''}
@@ -62,7 +70,7 @@ function Dashboard() {
                    {isActive === 3 ? (<h1>i am three</h1>) : ''}
                   { isActive === 4 ? (<h1>i am four</h1>) : ''}
                 
-                <h1>main bar</h1>
+                {/* <h1>main bar</h1> */}
             </div>
         </div> 
         </>

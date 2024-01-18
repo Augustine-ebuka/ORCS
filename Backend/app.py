@@ -50,6 +50,7 @@ def student_login():
                 return jsonify({"error":"password incorrect"}), 401
             
             session['user_id'] = student.id
+            session['matric_no'] = student.matric_no
             session['is_logged_in'] = True
             return jsonify({'message': 'User logged in successfully'}), 200
         
@@ -191,101 +192,172 @@ def admin_login():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/student/result/upload', methods=['POST', 'GET'])
-def upload_student_result():
+    
+@app.route('/api/result', methods=['GET'])
+def student_result():
     try:
-        # session['is_logged_in'] = True
-        # session['stud_mat'] = matric_no
         if request.method == 'GET':
-            matric_no = '73322'
-            form_data = db.session.query(Student, Result).filter(
-                    Student.matric_no == Result.matric_no).filter(Student.matric_no == matric_no).all()
-            if form_data:
-                student_info = []
-                student, result = form_data[0]
-                student_name = student.first_name
-                student_lname = student.last_name
-                student_othername = student.other_name
-                student_name = student_name + ' ' + student_lname + ' ' + student_othername
-                student_mark = result.mark
-                student_grade = result.grade_point
-                student_course = result.course_code
-                student_session = result.session
-                student_semester = result.semester
-                student_info.append(student_name)
-                student_info.append(student_mark) 
-                student_info.append(student_grade)
-                student_info.append(student_course)
-                student_info.append(student_session)
-                student_info.append(student_semester)
-                return jsonify(student_info), 200
+            matric_no = session.get('matric_no')
+            user_id = session.get('user_id')
 
-        if request.method == 'POST':
-            # Get Post Request
-            data = request.get_json()
-            course_code = data.get('course_code')
-            matric_no = data.get('matric_no')
-            mark = data.get('mark')
-            grade_point = data.get('grade_point')
-            session = data.get('session')
-            semester = data.get('semester')
-
-            # Insert a function that computes the grade point based on marks
-
-            data = request.get_json()
-            matric_no = data.get('matric_no')
+            if (not matric_no) or (not user_id):
+                return jsonify({"error": "unauthenticated"}), 400
             
-            # Filter Student Information Based on Matric No
-            form_data = db.session.query(Student).filter(Student.matric_no == matric_no).all()
+            stu_data = request.args  # Use request.args to get query parameters from the URL
+            stu_session = stu_data.get('session')  
+            stu_semester = stu_data.get('semester')
+            
+            if not stu_semester or not stu_session:
+                return jsonify({"error": "provide value for student session and semester"}), 400
+
+            # Use SQLAlchemy join for a cleaner query
+            form_data = (
+                db.session.query(Student, Result)
+                .join(Result, Student.matric_no == Result.matric_no)
+                .filter(
+                    Student.id == user_id,
+                    Result.session == stu_session,
+                    Result.semester == stu_semester
+                )
+                .all()
+            )
+
             if form_data:
                 student_info = []
-                student = form_data[0]
-                student_info.append(student.first_name)
-                student_info.append(student.last_name)
-                student_info.append(student.other_name)
-                student_info.append(student.faculty)
-                student_info.append(student.department)
-                return jsonify(student_info), 200
-            else:
-                return jsonify({'message': 'Student not found'}), 404
+                
+                for student, result in form_data:
+                    student_result ={
+                    
+                        "name": f"{student.first_name} {student.last_name}",
+                        "mark": result.mark,
+                        "grade": result.grade_point,
+                        "course_code": result.course_code,
+                        "session": result.session,
+                        "semester": result.semester,
+                        "course_unit": result.course_unit,
+                    }
+                    
+                    student_info.append(student_result)
 
-            # Filter Result based on Matric No
-            form_data = db.session.query(Result).filter(Result.matric_no == matric_no).all()
-            if form_data:
-                result_info = []
-                for result in form_data:
-                    result_info.append({
-                        'course_code': result.course_code,
-                        'mark': result.mark,
-                        'grade_point': result.grade_point,
-                        'session': result.session,
-                        'semester': result.semester
-                    })
-                return jsonify(result_info), 200
-            else:
-                return jsonify({'message': 'Result not found'}), 404
+                return jsonify({'result': student_info}), 200
 
-            upload_result = Result(
-                course_code=course_code,
-                matric_no=matric_no,
-                mark=mark,
-                grade_point=grade_point,
-                session=session,
-                semester=semester
-            )
-            db.session.add(upload_result)
-            db.session.commit()
-
-            # course_code = data.get('course_code')
-            student_result = db.session.query(Student, Result).join(Result).filter(
-                    Student.matric_no == Result.matric_no).all()
-
-            return jsonify({'message': 'File uploaded successfully'}), 200
+            return jsonify({"error": "No data found"}), 404
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
+
+    
+
+
+# @app.route('/api/student/result/fetch', methods=['POST', 'GET'])
+# def upload_student_result():
+#     try:
+#         if request.method == 'GET':
+#             matric_no = session.get('matric_no')
+#             user_id = session.get('user_id')
+            
+#             if (not matric_no) or (not user_id):
+#                 return jsonify({"error": "unauthenticated"}), 400
+            
+#             stu_data = request.get_json()
+#             stu_session = stu_data.get('session')  # use get method to avoid KeyError
+#             stu_semester = stu_data.get('semester')
+            
+#             if not stu_semester or not stu_session:
+#                 return jsonify({"error": "provide value for student session and semester"}), 400
+
+#             # criteria for fetching student result; session, semester
+#             form_data = db.session.query(Student, Result).filter(
+#                 Student.matric_no == Result.matric_no, 
+#                 Result.session == stu_session, 
+#                 Result.semester == stu_semester
+#             ).all()
+
+#             if form_data:
+#                 student_info = []
+#                 student, result = form_data[0]
+#                 student_name = f"{student.first_name} {student.last_name} {student.other_name}"
+#                 student_mark = result.mark
+#                 student_grade = result.grade_point
+#                 student_course = result.course_code
+#                 student_session = result.session
+#                 student_semester = result.semester
+
+#                 student_info.extend([
+#                     student_name, student_mark, student_grade,
+#                     student_course, student_session, student_semester
+#                 ])
+
+#                 return jsonify(student_info), 200
+
+#             return jsonify({"error": "No data found"}), 404
+
+  
+
+#         if request.method == 'POST':
+#             # Get Post Request
+#             data = request.get_json()
+#             course_code = data.get('course_code')
+#             matric_no = data.get('matric_no')
+#             mark = data.get('mark')
+#             grade_point = data.get('grade_point')
+#             session = data.get('session')
+#             semester = data.get('semester')
+
+#             # Insert a function that computes the grade point based on marks
+
+#             data = request.get_json()
+#             matric_no = data.get('matric_no')
+            
+#             # Filter Student Information Based on Matric No
+#             form_data = db.session.query(Student).filter(Student.matric_no == matric_no).all()
+#             if form_data:
+#                 student_info = []
+#                 student = form_data[0]
+#                 student_info.append(student.first_name)
+#                 student_info.append(student.last_name)
+#                 student_info.append(student.other_name)
+#                 student_info.append(student.faculty)
+#                 student_info.append(student.department)
+#                 return jsonify(student_info), 200
+#             else:
+#                 return jsonify({'message': 'Student not found'}), 404
+
+#             # Filter Result based on Matric No
+#             form_data = db.session.query(Result).filter(Result.matric_no == matric_no).all()
+#             if form_data:
+#                 result_info = []
+#                 for result in form_data:
+#                     result_info.append({
+#                         'course_code': result.course_code,
+#                         'mark': result.mark,
+#                         'grade_point': result.grade_point,
+#                         'session': result.session,
+#                         'semester': result.semester
+#                     })
+#                 return jsonify(result_info), 200
+#             else:
+#                 return jsonify({'message': 'Result not found'}), 404
+
+#             upload_result = Result(
+#                 course_code=course_code,
+#                 matric_no=matric_no,
+#                 mark=mark,
+#                 grade_point=grade_point,
+#                 session=session,
+#                 semester=semester
+#             )
+#             db.session.add(upload_result)
+#             db.session.commit()
+
+#             # course_code = data.get('course_code')
+#             student_result = db.session.query(Student, Result).join(Result).filter(
+#                     Student.matric_no == Result.matric_no).all()
+
+#             return jsonify({'message': 'File uploaded successfully'}), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
 
 
 # @app.route('/api/test')

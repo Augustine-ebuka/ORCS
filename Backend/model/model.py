@@ -50,7 +50,7 @@ class Course(db.Model):
      course_code = db.Column(db.String(32), primary_key=True ,nullable=False)
      course_title = db.Column(db.String(32))
      course_lecturer = db.Column(db.String(32))
-     course_credit = db.Column(db.String(32), nullable=False)
+     course_credit = db.Column(db.Integer, nullable=False)
 
 
 class Result(db.Model):
@@ -59,9 +59,15 @@ class Result(db.Model):
     course_code = db.Column(db.String(32), db.ForeignKey('course.course_code'), nullable=False)
     matric_no =db.Column(db.String(32), db.ForeignKey('students.matric_no'), nullable=False )
     mark =db.Column(db.Integer, nullable=False)
-    grade_point = db.Column(db.Integer)
+    grade_point = db.Column(db.Integer) # total course * course unit
+    grade_unit = db.Column(db.Integer) # if mark >= 70 = 5 else if mark < 60 AND >=60 = 4 else if mark < 50 and >= 59 = 3 else if mark is 49 AND <= 45 = 2 else if <= 0 
+    total = db.Column(db.Integer) # grade_point / total_course_unit
+    total_course_unit = db.Column(db.Integer) # ADD all course_unit 
+    course_unit = db.Column(db.Integer, nullable=False)
     session = db.Column(db.String(32), nullable=False)
     semester = db.Column(db.String(32), db.Enum('first', 'second'), nullable=False)
+
+    
 
 
 class Admin_Base(db.Model):

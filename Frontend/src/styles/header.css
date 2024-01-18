@@ -14,6 +14,16 @@
     align-items: center;
     font-size: 12px;
 }
+.header-right span{
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.header-left span{
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+}
 .header-right .pic{
     border-radius:50% ;
     background-color: gray;
@@ -22,4 +32,19 @@
 }
 .header-left{
     font-size: 12px;
+}
+.header-left span{
+    text-transform: uppercase;
+    font-weight: 800;
+}
+.header-right button{
+    background-color: red;
+    padding: 7px;
+    cursor: pointer;
+    color: white;
+    border-radius: 3px;
+    border: none;
+}
+.header-right button:hover{
+    background-color: brown;
 }
