@@ -25,4 +25,17 @@
 
   
   }
+  .checkresultbtn{
+    background-color: #007bff;
+    padding: 10px;
+    border-radius: 3px;
+    margin-top: 7px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    max-width: 80%;
+  }
+  .checkresultbtn:hover{
+    background-color: rgb(29, 29, 146);
+  }
   

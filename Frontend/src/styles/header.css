@@ -48,3 +48,10 @@
 .header-right button:hover{
     background-color: brown;
 }
+.pic{
+    background: url('../assets/mypp.jpg');
+    background-position: center;
+    background-size: contain;
+    padding: 5px;
+   
+}

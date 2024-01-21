@@ -16,7 +16,7 @@
     cursor: pointer;
 }
 .active{
-    background-color: blue;
+    background-color: #007bff;
     color: white;
     border-radius: 3px;
 }

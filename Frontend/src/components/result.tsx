@@ -20,10 +20,13 @@ const [alert, setAlert] = useState('')
       const endpoint = 'http://localhost:5000/api/result'
 
       const result = await httpClient.get(endpoint,{ params: criteria })
+      setAlert('loading')
+
       if (result.status === 200) {
         setResult(result.data.result)
         console.log(seeresult)
         console.log(result.data.result)
+        setAlert('')
         
       } else if(result.status === 404) {
         setAlert('data not found')
@@ -33,7 +36,7 @@ const [alert, setAlert] = useState('')
       console.error('Error fetching result:', error.message);
       
     }finally{
-      
+      setAlert('done regardles')
     }
   }
 
@@ -52,9 +55,7 @@ const [alert, setAlert] = useState('')
                 <div className="result-header">
                     <div className="input-form">
                     <label htmlFor="session">session</label>
-                    <form>
-                      
-                    </form>
+          
                     <select name="session" value={criteria.session} defaultValue="2022/2023" onChange={handleOnChange}>
                         <option value="2022/2023">2022/2023</option>
                         <option value="2022/2023">2022/2023</option>
@@ -62,13 +63,16 @@ const [alert, setAlert] = useState('')
                     </div>
                     <div className="input-form">
                     <label htmlFor="semester">Semester</label>
+
                     <select name="semester" value={criteria.semester} defaultValue='first' onChange={handleOnChange}>
                         <option value="first">1st semsetr</option>
                         <option value="second">2nd semester</option>
                     </select>
+
                     </div>
                     <div className="input-form">
                     <label htmlFor="level">Level</label>
+
                     <select name="level" value='level'>
                         <option value="session">100</option>
                         <option value="session">200</option>
@@ -76,8 +80,9 @@ const [alert, setAlert] = useState('')
                         <option value="session">400</option>
                         <option value="session">500</option>
                     </select>
+                    
                     </div>
-                    <button onClick={fetchResult}>submit</button>
+                    <button onClick={fetchResult} className='checkresultbtn'>submit</button>
                   
                 </div>
                     
@@ -94,7 +99,7 @@ const [alert, setAlert] = useState('')
                       </tr>
                     </thead>
                     <tbody>
-                      {seeresult?.map((result, index) => (
+                      {seeresult?.map((result:any, index) => (
                         <tr key={index}>
                           <td>{result.course_code}</td>
                           <td>{result.course_unit}</td>
@@ -103,6 +108,8 @@ const [alert, setAlert] = useState('')
                           <td>{result.session}</td>
                           <td>{result.semester}</td>
                         </tr>
+                        
+                       
                       ))}
                       {alert}
                     </tbody>
